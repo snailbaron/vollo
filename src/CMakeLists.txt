@@ -1,0 +1,13 @@
+add_executable (vollo
+    controller.cpp
+    events.cpp
+    gameplay.cpp
+    main.cpp
+    scene.cpp
+    timer.cpp
+)
+
+target_include_directories (vollo PRIVATE ${SFML_INCLUDE_DIR})
+target_link_libraries (vollo ${SFML_LIBRARIES} ${SFML_DEPENDENCIES})
+
+install (TARGETS vollo DESTINATION bin)
