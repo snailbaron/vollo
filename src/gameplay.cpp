@@ -37,29 +37,47 @@ void Player::update(double delta)
 {
     // Apply controls
     velocity.x = control->movement * PlayerMoveSpeed;
-    if (velocity.y == 0.0 && control->jump) {
-        control->jump = false;
+    if (velocity.y == 0.0 && control->requestJump) {
+        control->stopJump.reset();
+        jumping = true;
         velocity.y = PlayerJumpSpeed;
     }
 
+    if (velocity.y != 0.0 && control->stopJump) {
+        jumping = false;
+    }
+
     // Apply gravity
-    velocity.y -= PlayerGravity;
+    velocity.y -= (jumping ? PlayerJumpGravity : PlayerGravity);
 
     // Move position
     position += velocity * delta;
-    clamp(position.x, PlayerRadius, 1.0 - PlayerRadius);
+    switch (side) {
+        case Side::Left:
+            clamp(position.x,
+                PlayerRadius, 0.5 - SeparatorWidth / 2 - PlayerRadius);
+            break;
+
+        case Side::Right:
+            clamp(position.x,
+                0.5 + SeparatorWidth / 2 + PlayerRadius, 1.0 - PlayerRadius);
+            break;
+    }
 
     // Land, if required
     if (velocity.y != 0.0 && position.y <= PlayerRadius) {
         position.y = PlayerRadius;
         velocity.y = 0.0;
+        control->requestJump.reset();
     }
 }
 
 Gameplay::Gameplay()
 {
     _leftPlayer.position = {PlayerRadius, PlayerRadius};
+    _leftPlayer.side = Player::Side::Left;
     _rightPlayer.position = {1 - PlayerRadius, PlayerRadius};
+    _rightPlayer.side = Player::Side::Right;
     _ball.position = {0.5, 0.5};
 }
 
@@ -99,4 +117,19 @@ std::weak_ptr<Control> Gameplay::playerOneControl() const
 std::weak_ptr<Control> Gameplay::playerTwoControl() const
 {
     return _rightPlayer.control;
+}
+
+const Vector<double>& Gameplay::playerOnePosition() const
+{
+    return _leftPlayer.position;
+}
+
+const Vector<double>& Gameplay::playerTwoPosition() const
+{
+    return _rightPlayer.position;
+}
+
+const Vector<double>& Gameplay::ballPosition() const
+{
+    return _ball.position;
 }

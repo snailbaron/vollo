@@ -7,13 +7,17 @@ namespace config {
         constexpr auto PlayerRadius = 0.04;
         constexpr auto BallRadius = 0.03;
         constexpr auto ImpactFriction = 0.9;
-        constexpr auto BallImpulse = 0.5;
+        constexpr auto BallImpulse = 0.7;
 
         constexpr auto BallGravity = 0.01;
         constexpr auto PlayerGravity = 0.04;
+        constexpr auto PlayerJumpGravity = 0.013;
 
         constexpr auto PlayerMoveSpeed = 0.4;
-        constexpr auto PlayerJumpSpeed = 0.8;
+        constexpr auto PlayerJumpSpeed = 0.6;
+
+        constexpr auto SeparatorWidth = 0.02;
+        constexpr auto SeparatorHeight = 0.25;
     }
 
     namespace client {
@@ -31,6 +35,7 @@ namespace config {
         constexpr auto PlayerPointCount = 32;
         const sf::Color BallColor = sf::Color::White;
         constexpr auto FloorBorder = 0.05f;
+        constexpr auto ShadowHeight = 0.02f;
 
         inline const ControlScheme playerOneControls {
             sf::Keyboard::A,

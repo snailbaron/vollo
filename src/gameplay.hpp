@@ -13,6 +13,11 @@ struct SpatialState {
 };
 
 struct Player {
+    enum class Side {
+        Left,
+        Right,
+    };
+
     Player();
 
     void update(double delta);
@@ -20,6 +25,8 @@ struct Player {
     Vector<double> position;
     Vector<double> velocity;
     std::shared_ptr<Control> control;
+    Side side;
+    bool jumping = false;
 };
 
 struct Ball {
@@ -37,6 +44,10 @@ public:
 
     std::weak_ptr<Control> playerOneControl() const;
     std::weak_ptr<Control> playerTwoControl() const;
+
+    const Vector<double>& playerOnePosition() const;
+    const Vector<double>& playerTwoPosition() const;
+    const Vector<double>& ballPosition() const;
 
 private:
     Player _leftPlayer;

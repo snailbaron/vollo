@@ -1,5 +1,6 @@
 add_executable (vollo
     controller.cpp
+    delivery_flag.cpp
     events.cpp
     gameplay.cpp
     main.cpp

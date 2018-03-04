@@ -1,6 +1,7 @@
 #pragma once
 
 #include "config.hpp"
+#include "delivery_flag.hpp"
 
 #include <SFML/Window.hpp>
 
@@ -8,7 +9,8 @@
 
 struct Control {
     double movement = 0.0;
-    bool jump = false;
+    DeliveryFlag requestJump;
+    DeliveryFlag stopJump;
 };
 
 class Controller {

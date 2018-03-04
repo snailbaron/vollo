@@ -18,12 +18,12 @@ int main()
         sf::VideoMode(1280, 720), "Vollo", sf::Style::Default, settings);
     window->setKeyRepeatEnabled(false);
 
-    Gameplay core;
-    client::Scene scene(window);
+    auto core = std::make_shared<Gameplay>();
+    client::Scene scene(window, core);
     Controller playerOneController(
-        core.playerOneControl(), config::client::playerOneControls);
+        core->playerOneControl(), config::client::playerOneControls);
     Controller playerTwoController(
-        core.playerTwoControl(), config::client::playerTwoControls);
+        core->playerTwoControl(), config::client::playerTwoControls);
 
     FrameTimer timer(GAME_FPS);
 
@@ -44,11 +44,13 @@ int main()
             continue;
         }
 
-        while (frames--) {
-            core.update(timer.delta());
+        for (int i = 0; i < frames; i++) {
+            core->update(timer.delta());
         }
 
         event::bus.deliver();
+
+        scene.update(timer.delta() * frames);
 
         window->clear(sf::Color::Black);
         scene.render();

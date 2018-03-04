@@ -30,7 +30,11 @@ void Controller::processEvent(const sf::Event& event)
         if (sf::Keyboard::isKeyPressed(_scheme.moveRightKey)) {
             control->movement += 1.0;
         }
-    } else if (event.type == sf::Event::KeyPressed && key == _scheme.jumpKey) {
-        control->jump = true;
+    } else if (key == _scheme.jumpKey) {
+        if (event.type == sf::Event::KeyPressed) {
+            control->requestJump.load();
+        } else {
+            control->stopJump.load();
+        }
     }
 }
