@@ -4,6 +4,7 @@ add_executable (vollo
     events.cpp
     gameplay.cpp
     main.cpp
+    physics.cpp
     scene.cpp
     timer.cpp
 )

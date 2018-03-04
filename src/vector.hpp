@@ -52,7 +52,24 @@ struct Vector {
         assert(len > 0);
         return {x / len, y / len};
     }
+
+    Vector normalized(Vector default) const
+    {
+        auto len = length();
+        if (len == 0) {
+            return default;
+        }
+        return {x / len, y / len};
+    }
 };
+
+template <class T>
+Vector<T> operator-(Vector<T> vector)
+{
+    vector.x = -vector.x;
+    vector.y = -vector.y;
+    return vector;
+}
 
 template <class T>
 Vector<T> operator+(Vector<T> left, const Vector<T>& right)

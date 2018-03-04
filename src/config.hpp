@@ -9,7 +9,13 @@ namespace config {
         constexpr auto ImpactFriction = 0.9;
         constexpr auto BallImpulse = 0.7;
 
-        constexpr auto BallGravity = 0.01;
+        constexpr auto BallWallForce = 1000.0;
+        constexpr auto BallWallFriction = 0.95;
+
+        constexpr auto BallPlayerForce = 100.0;
+        constexpr auto BallPlayerFriction = 0.95;
+
+        constexpr auto BallGravity = 0.02;
         constexpr auto PlayerGravity = 0.04;
         constexpr auto PlayerJumpGravity = 0.013;
 
@@ -18,6 +24,12 @@ namespace config {
 
         constexpr auto SeparatorWidth = 0.02;
         constexpr auto SeparatorHeight = 0.25;
+
+        constexpr auto PlayerBounce = 100000.0;
+        constexpr auto BallBounce = 100000.0;
+        constexpr auto WallBounce = 100000.0;
+
+        constexpr auto CommonFriction = 0.95;
     }
 
     namespace client {

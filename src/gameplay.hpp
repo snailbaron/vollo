@@ -2,6 +2,7 @@
 
 #include "vector.hpp"
 #include "controller.hpp"
+#include "physics.hpp"
 
 #include <memory>
 
@@ -22,18 +23,18 @@ struct Player {
 
     void update(double delta);
 
-    Vector<double> position;
-    Vector<double> velocity;
+    ph::Circle body;
     std::shared_ptr<Control> control;
     Side side;
     bool jumping = false;
 };
 
 struct Ball {
-    Vector<double> position;
-    Vector<double> velocity;
+    Ball();
 
     void update(double delta);
+
+    ph::Circle body;
 };
 
 class Gameplay {
@@ -53,4 +54,5 @@ private:
     Player _leftPlayer;
     Player _rightPlayer;
     Ball _ball;
+    std::vector<ph::AxisWall> _walls;
 };

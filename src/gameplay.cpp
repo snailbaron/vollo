@@ -4,108 +4,120 @@
 #include "config.hpp"
 
 #include <algorithm>
+#include <iostream>
 
 using namespace config::gameplay;
 
-namespace {
-
-void processCollision(const Player& player, Ball& ball)
+Ball::Ball()
 {
-    auto playerToBall = ball.position - player.position;
-    auto distance = playerToBall.length();
-    if (distance < PlayerRadius + BallRadius) {
-        if (distance == 0.0) {
-            playerToBall = {0, 1};
-        }
-        ball.velocity = playerToBall.normalized() * BallImpulse;
-    }
+    body.radius = BallRadius;
+    body.bounce = BallBounce;
 }
-
-} // namespace
 
 void Ball::update(double delta)
 {
-    velocity.y -= BallGravity;
-    position += velocity * delta;
+    body.velocity.y -= BallGravity;
+    body.position += body.velocity * delta;
 }
 
 Player::Player()
     : control(std::make_shared<Control>())
-{ }
+{
+    body.radius = PlayerRadius;
+    body.bounce = PlayerBounce;
+}
 
 void Player::update(double delta)
 {
     // Apply controls
-    velocity.x = control->movement * PlayerMoveSpeed;
-    if (velocity.y == 0.0 && control->requestJump) {
+    body.velocity.x = control->movement * PlayerMoveSpeed;
+    if (body.velocity.y == 0.0 && control->requestJump) {
         control->stopJump.reset();
         jumping = true;
-        velocity.y = PlayerJumpSpeed;
+        body.velocity.y = PlayerJumpSpeed;
     }
 
-    if (velocity.y != 0.0 && control->stopJump) {
+    if (body.velocity.y != 0.0 && control->stopJump) {
         jumping = false;
     }
 
     // Apply gravity
-    velocity.y -= (jumping ? PlayerJumpGravity : PlayerGravity);
+    body.velocity.y -= (jumping ? PlayerJumpGravity : PlayerGravity);
 
     // Move position
-    position += velocity * delta;
+    body.position += body.velocity * delta;
     switch (side) {
         case Side::Left:
-            clamp(position.x,
+            clamp(body.position.x,
                 PlayerRadius, 0.5 - SeparatorWidth / 2 - PlayerRadius);
             break;
 
         case Side::Right:
-            clamp(position.x,
+            clamp(body.position.x,
                 0.5 + SeparatorWidth / 2 + PlayerRadius, 1.0 - PlayerRadius);
             break;
     }
 
     // Land, if required
-    if (velocity.y != 0.0 && position.y <= PlayerRadius) {
-        position.y = PlayerRadius;
-        velocity.y = 0.0;
+    if (body.velocity.y != 0.0 && body.position.y <= PlayerRadius) {
+        body.position.y = PlayerRadius;
+        body.velocity.y = 0.0;
         control->requestJump.reset();
     }
 }
 
 Gameplay::Gameplay()
 {
-    _leftPlayer.position = {PlayerRadius, PlayerRadius};
+    {
+        ph::AxisWall wall;
+        wall.bounce = WallBounce;
+        wall.position = 0.0;
+        wall.alignment = ph::AxisWall::Alignment::Horizontal;
+        wall.openSide = ph::AxisWall::OpenSide::Positive;
+        _walls.push_back(wall);
+    }
+
+    {
+        ph::AxisWall wall;
+        wall.bounce = WallBounce;
+        wall.position = 0.0;
+        wall.alignment = ph::AxisWall::Alignment::Vertical;
+        wall.openSide = ph::AxisWall::OpenSide::Positive;
+        _walls.push_back(wall);
+    }
+
+    {
+        ph::AxisWall wall;
+        wall.bounce = WallBounce;
+        wall.position = 1.0;
+        wall.alignment = ph::AxisWall::Alignment::Vertical;
+        wall.openSide = ph::AxisWall::OpenSide::Negative;
+        _walls.push_back(wall);
+    }
+
+    _leftPlayer.body.position = {PlayerRadius, PlayerRadius};
     _leftPlayer.side = Player::Side::Left;
-    _rightPlayer.position = {1 - PlayerRadius, PlayerRadius};
+    _rightPlayer.body.position = {1 - PlayerRadius, PlayerRadius};
     _rightPlayer.side = Player::Side::Right;
-    _ball.position = {0.5, 0.5};
+    _ball.body.position = {0.5, 0.5};
 }
 
 void Gameplay::update(double delta)
 {
     _leftPlayer.update(delta);
-    event::bus.push(event::LeftPlayerMove{_leftPlayer.position});
+    event::bus.push(event::LeftPlayerMove{_leftPlayer.body.position});
 
     _rightPlayer.update(delta);
-    event::bus.push(event::RightPlayerMove{_rightPlayer.position});
+    event::bus.push(event::RightPlayerMove{_rightPlayer.body.position});
 
     _ball.update(delta);
-    event::bus.push(event::BallMove{_ball.position});
+    event::bus.push(event::BallMove{_ball.body.position});
 
-    processCollision(_leftPlayer, _ball);
-    processCollision(_rightPlayer, _ball);
+    ph::collide(_leftPlayer.body, _ball.body, delta);
+    ph::collide(_rightPlayer.body, _ball.body, delta);
 
-    if (_ball.position.x < BallRadius) {
-        _ball.position.x = BallRadius;
-        _ball.velocity.x *= -ImpactFriction;
-    }
-    if (_ball.position.x > 1 - BallRadius) {
-        _ball.position.x = 1 - BallRadius;
-        _ball.velocity.x *= -ImpactFriction;
-    }
-    if (_ball.position.y < BallRadius) {
-        _ball.position.y = BallRadius;
-        _ball.velocity.y *= -ImpactFriction;
+    for (const auto& wall : _walls) {
+        ph::collide(wall, _ball.body, delta);
     }
 }
 
@@ -121,15 +133,15 @@ std::weak_ptr<Control> Gameplay::playerTwoControl() const
 
 const Vector<double>& Gameplay::playerOnePosition() const
 {
-    return _leftPlayer.position;
+    return _leftPlayer.body.position;
 }
 
 const Vector<double>& Gameplay::playerTwoPosition() const
 {
-    return _rightPlayer.position;
+    return _rightPlayer.body.position;
 }
 
 const Vector<double>& Gameplay::ballPosition() const
 {
-    return _ball.position;
+    return _ball.body.position;
 }
