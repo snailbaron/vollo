@@ -1,39 +1,24 @@
 #pragma once
 
-#include "vector.hpp"
+#include <math.hpp>
 
 namespace ph {
 
-struct AxisWall {
-    enum class OpenSide {
-        Positive,
-        Negative,
-    };
-
-    enum class Alignment {
-        Horizontal,
-        Vertical,
-    };
-
-    double position;
-    double bounce;
-    OpenSide openSide;
-    Alignment alignment;
+struct Plane {
+    math::Line line;
 };
 
-struct Circle {
-    Vector<double> position;
-    Vector<double> velocity;
-    double radius;
+struct Wall {
+
+};
+
+struct Sphere {
+    math::Circle position;
+    math::Vector<double> velocity;
     double bounce;
 };
 
 template <class Left, class Right>
 void collide(const Left& left, Right& right, double delta);
-
-extern template void collide<AxisWall, Circle>(
-    const AxisWall& left, Circle& right, double delta);
-extern template void collide<Circle, Circle>(
-    const Circle& left, Circle& right, double delta);
 
 } // namespace ph

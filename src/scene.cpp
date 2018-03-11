@@ -3,6 +3,8 @@
 
 #include <cassert>
 
+using namespace math;
+
 namespace client {
 
 using namespace config::client;

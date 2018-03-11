@@ -1,8 +1,8 @@
 #pragma once
 
-#include "events.hpp"
-#include "vector.hpp"
 #include "gameplay.hpp"
+
+#include <math.hpp>
 
 #include <SFML/Graphics.hpp>
 
@@ -14,7 +14,7 @@ class Player {
 public:
     Player(const sf::Color& color);
 
-    void setPosition(const Vector<float>& position);
+    void setPosition(const math::Vector<float>& position);
     void render(sf::RenderTarget& target) const;
 
 private:
@@ -25,7 +25,7 @@ class Ball {
 public:
     Ball();
 
-    void setPosition(const Vector<float>& position);
+    void setPosition(const math::Vector<float>& position);
     void render(sf::RenderTarget& target) const;
 
 private:
@@ -54,7 +54,7 @@ private:
     sf::RectangleShape _shape;
 };
 
-class Scene : public evening::Subscriber {
+class Scene {
 public:
     Scene(
         const std::shared_ptr<sf::RenderTarget>& renderTarget,

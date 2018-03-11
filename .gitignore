@@ -1,4 +1,6 @@
 /.vs/
+/bin/
 /build/
 /install/
 /tags
+*.vcxproj.user

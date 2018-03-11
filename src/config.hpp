@@ -25,11 +25,10 @@ namespace config {
         constexpr auto SeparatorWidth = 0.02;
         constexpr auto SeparatorHeight = 0.25;
 
-        constexpr auto PlayerBounce = 100000.0;
-        constexpr auto BallBounce = 100000.0;
-        constexpr auto WallBounce = 100000.0;
-
         constexpr auto CommonFriction = 0.95;
+
+        constexpr auto PlayerHitForce = 0.8;
+        constexpr auto WallHitFriction = 0.95;
     }
 
     namespace client {

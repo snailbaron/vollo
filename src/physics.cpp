@@ -4,52 +4,64 @@
 #include <algorithm>
 #include <optional>
 
+using namespace math;
+
 namespace ph {
 
 namespace {
 
 struct Collision {
-    Collision(const Vector<double>& normal, double penetration)
-        : normal(normal)
-        , penetration(penetration)
+    Collision(double time, const Vector<double>& normal)
+        : time(time)
+        , normal(normal)
     { }
 
+    double time;
     Vector<double> normal;
-    double penetration;
 };
 
-std::optional<Collision> findCollision(const Circle& left, const Circle& right)
+std::optional<Collision> findCollision(
+    const Plane& plane, const Sphere& circle, double delta)
 {
-    auto direction = right.position - left.position;
-    auto penetration = left.radius + right.radius - direction.length();
-    if (penetration <= 0) {
+    if (math::dot(circle.velocity, plane.line.normal) >= 0) {
         return {};
     }
 
-    auto normal = direction.normalized({0, 1});
-    return {{normal, penetration}};
+    auto trajectory = Line::alongDirection(circle.position.center, circle.velocity);
+    auto offsetLine = plane.line.move(circle.position.radius);
+    auto intersection = lineCross(offsetLine, trajectory);
+    if (!intersection) {
+        return {};
+    }
+
+    auto travel = *intersection - circle.position.center;
+    auto travelTime = travel.length() / circle.velocity.length();
+    if (travelTime >= delta) {
+        return {};
+    }
+
+    return {{travelTime, plane.line.normal}};
 }
 
-std::optional<Collision> findCollision(const AxisWall& wall, const Circle& circle)
+std::optional<Collision> staticBallCollision(const Sphere& staticBall, const Sphere& mover)
 {
-    auto circlePosition = wall.alignment == AxisWall::Alignment::Horizontal ?
-        circle.position.y : circle.position.x;
-    auto distance = wall.position - circlePosition;
-    if (wall.openSide == AxisWall::OpenSide::Negative) {
-        distance = -distance;
-    }
-    auto penetration = distance + circle.radius;
-    if (penetration <= 0) {
+    auto traceResult = math::circleTraceCircle(
+        mover.position, mover.velocity, staticBall.position);
+    if (!traceResult) {
         return {};
     }
 
-    auto normal = wall.alignment == AxisWall::Alignment::Vertical ?
-        Vector<double>{1, 0} : Vector<double>{0, 1};
-    if (wall.openSide == AxisWall::OpenSide::Negative) {
-        normal = -normal;
-    }
+    auto normal = (*traceResult - staticBall.position.center).normalized();
+    auto distance = (*traceResult - mover.position.center).length();
+    auto time = distance / mover.velocity.length();
+    return {{time, normal}};
+}
 
-    return {{normal, penetration}};
+std::optional<Collision> ballCollision(const Sphere& impactor, const Sphere& acceptor)
+{
+    auto fakeMover = acceptor;
+    fakeMover.velocity -= impactor.velocity;
+    return staticBallCollision(impactor, fakeMover);
 }
 
 } // namespace
@@ -69,10 +81,5 @@ void collide(const Left& left, Right& right, double delta)
     right.velocity += collision->normal * delta * force;
     right.velocity *= friction;
 }
-
-template void collide<AxisWall, Circle>(
-    const AxisWall& left, Circle& right, double delta);
-template void collide<Circle, Circle>(
-    const Circle& left, Circle& right, double delta);
 
 } // namespace ph

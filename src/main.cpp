@@ -1,6 +1,5 @@
 #include "timer.hpp"
 #include "gameplay.hpp"
-#include "events.hpp"
 #include "scene.hpp"
 #include "controller.hpp"
 
@@ -47,8 +46,6 @@ int main()
         for (int i = 0; i < frames; i++) {
             core->update(timer.delta());
         }
-
-        event::bus.deliver();
 
         scene.update(timer.delta() * frames);
 

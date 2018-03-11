@@ -4,6 +4,8 @@
 #include <cassert>
 #include <type_traits>
 
+namespace math {
+
 template <class T>
 struct Vector {
     static_assert(std::is_arithmetic<T>(), "Vector must hold arithmetic type");
@@ -53,13 +55,35 @@ struct Vector {
         return {x / len, y / len};
     }
 
-    Vector normalized(Vector default) const
+    Vector normalized(Vector alternative) const
     {
         auto len = length();
         if (len == 0) {
-            return default;
+            return alternative;
         }
         return {x / len, y / len};
+    }
+
+    Vector rotateCw90() const
+    {
+        return {y, -x};
+    }
+
+    Vector rotateCcw90() const
+    {
+        return {-y, x};
+    }
+
+    Vector projection(const Vector& axis) const
+    {
+        auto normalizedAxis = axis.normalized();
+        auto coordinate = dot(*this, normalizedAxis);
+        return normalizedAxis * coordinate;
+    }
+
+    Vector ort(const Vector& axis) const
+    {
+        return *this - projection(axis);
     }
 };
 
@@ -104,3 +128,17 @@ Vector<Target> vectorCast(const Vector<Source>& source)
 {
     return {static_cast<Target>(source.x), static_cast<Target>(source.y)};
 }
+
+template <class T>
+T dot(const Vector<T>& left, const Vector<T>& right)
+{
+    return left.x * right.x + left.y * right.y;
+}
+
+template <class T>
+T cross(const Vector<T>& left, const Vector<T>& right)
+{
+    return left.x * right.y - left.y * right.x;
+}
+
+} // namespace math
