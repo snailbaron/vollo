@@ -3,6 +3,7 @@
 #include <cmath>
 #include <cassert>
 #include <type_traits>
+#include <ostream>
 
 namespace math {
 
@@ -139,6 +140,13 @@ template <class T>
 T cross(const Vector<T>& left, const Vector<T>& right)
 {
     return left.x * right.y - left.y * right.x;
+}
+
+template <class T>
+std::ostream& operator<<(std::ostream& stream, const Vector<T>& vector)
+{
+    stream << "[" << vector.x << ", " << vector.y << "]";
+    return stream;
 }
 
 } // namespace math

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "controller.hpp"
-#include <math.hpp>
+#include <physics.hpp>
 
 #include <memory>
 
@@ -11,24 +11,14 @@ struct Player {
         Right,
     };
 
-    Player();
+    Player(Side side);
 
     void update(double delta);
 
-    math::Circle body;
-    math::Vector<double> velocity;
+    ph::DynamicSphere body;
     std::shared_ptr<Control> control;
     Side side;
     bool jumping = false;
-};
-
-struct Ball {
-    Ball();
-
-    void update(double delta);
-
-    math::Circle body;
-    math::Vector<double> velocity;
 };
 
 class Gameplay {
@@ -45,8 +35,7 @@ public:
     const math::Vector<double>& ballPosition() const;
 
 private:
-    Player _leftPlayer;
-    Player _rightPlayer;
-    Ball _ball;
-    std::vector<math::Line> _walls;
+    std::vector<Player> _players;
+    ph::DynamicSphere _ball;
+    std::vector<ph::Wall> _walls;
 };

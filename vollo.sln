@@ -3,9 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2002
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vollo", "src\vollo.vcxproj", "{F7D47813-39AA-4FA6-B829-DB2BEC2FC9BE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vollo", "src\vollo\vollo.vcxproj", "{F7D47813-39AA-4FA6-B829-DB2BEC2FC9BE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C917707C-5F88-40CB-9FB5-4C1F0C279726} = {C917707C-5F88-40CB-9FB5-4C1F0C279726}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "math", "src\math\math.vcxproj", "{C5227920-7EEB-440C-95B6-C5C1996480D8}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "physics", "src\physics\physics.vcxproj", "{C917707C-5F88-40CB-9FB5-4C1F0C279726}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C5227920-7EEB-440C-95B6-C5C1996480D8} = {C5227920-7EEB-440C-95B6-C5C1996480D8}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "config", "src\config\config.vcxproj", "{8498CCE8-1E42-461A-A6B8-FBD0B326DAB9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +41,22 @@ Global
 		{C5227920-7EEB-440C-95B6-C5C1996480D8}.Release|x64.Build.0 = Release|x64
 		{C5227920-7EEB-440C-95B6-C5C1996480D8}.Release|x86.ActiveCfg = Release|Win32
 		{C5227920-7EEB-440C-95B6-C5C1996480D8}.Release|x86.Build.0 = Release|Win32
+		{C917707C-5F88-40CB-9FB5-4C1F0C279726}.Debug|x64.ActiveCfg = Debug|x64
+		{C917707C-5F88-40CB-9FB5-4C1F0C279726}.Debug|x64.Build.0 = Debug|x64
+		{C917707C-5F88-40CB-9FB5-4C1F0C279726}.Debug|x86.ActiveCfg = Debug|Win32
+		{C917707C-5F88-40CB-9FB5-4C1F0C279726}.Debug|x86.Build.0 = Debug|Win32
+		{C917707C-5F88-40CB-9FB5-4C1F0C279726}.Release|x64.ActiveCfg = Release|x64
+		{C917707C-5F88-40CB-9FB5-4C1F0C279726}.Release|x64.Build.0 = Release|x64
+		{C917707C-5F88-40CB-9FB5-4C1F0C279726}.Release|x86.ActiveCfg = Release|Win32
+		{C917707C-5F88-40CB-9FB5-4C1F0C279726}.Release|x86.Build.0 = Release|Win32
+		{8498CCE8-1E42-461A-A6B8-FBD0B326DAB9}.Debug|x64.ActiveCfg = Debug|x64
+		{8498CCE8-1E42-461A-A6B8-FBD0B326DAB9}.Debug|x64.Build.0 = Debug|x64
+		{8498CCE8-1E42-461A-A6B8-FBD0B326DAB9}.Debug|x86.ActiveCfg = Debug|Win32
+		{8498CCE8-1E42-461A-A6B8-FBD0B326DAB9}.Debug|x86.Build.0 = Debug|Win32
+		{8498CCE8-1E42-461A-A6B8-FBD0B326DAB9}.Release|x64.ActiveCfg = Release|x64
+		{8498CCE8-1E42-461A-A6B8-FBD0B326DAB9}.Release|x64.Build.0 = Release|x64
+		{8498CCE8-1E42-461A-A6B8-FBD0B326DAB9}.Release|x86.ActiveCfg = Release|Win32
+		{8498CCE8-1E42-461A-A6B8-FBD0B326DAB9}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
